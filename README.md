@@ -28,7 +28,7 @@ Servicio API REST y servidor backend desarrollado en **CodeIgniter 4 (PHP 8.x)**
 
 ```bash
 # 1. Clonar repositorio
-git clone https://github.com/gruizmetasolutions-cpu/warhorse-backend.git
+git clone https://github.com/gruizmetasolutions-cpu/warhorse-web-backend.git
 cd warhorse-backend
 
 # 2. Instalar dependencias con Composer
