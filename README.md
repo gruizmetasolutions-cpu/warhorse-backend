@@ -1,69 +1,101 @@
-# CodeIgniter 4 Application Starter
+# ⚙️ Warhorse Logistics Group — Official API Backend
 
-## What is CodeIgniter?
+Servicio API REST y servidor backend desarrollado en **CodeIgniter 4 (PHP 8.x)** para la gestión y enrutamiento inteligente de oportunidades comerciales y cotizaciones de **Warhorse Logistics Group**.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## 🌟 Características Principales
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+- **Endpoint de Contacto Inteligente (`POST /api/contact`)**:
+  - Procesa requerimientos de clientes según la modalidad seleccionada (`ftl`, `ltl`, `special`, `managed`).
+  - Redirecciona lógicamente las notificaciones a los departamentos correspondientes (`Quotes@WarhorseBrokerage.com`, `SafetyandCompliance@warhorsebrokerage.com`, etc.).
+- **Persistencia SQL**: Estructura de BD en MySQL (`warhorse_db`) preparada para registro de prospectos.
+- **CORS Configurado**: Integración fluida con el cliente React frontend.
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## 🛠️ Tech Stack
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+- **Lenguaje**: PHP 8.x
+- **Framework**: CodeIgniter 4 (CI4)
+- **Base de Datos**: MySQL 8.x / MariaDB (Compatible con entorno Laragon `.test`)
+- **Gestor de Dependencias**: Composer
 
-## Installation & updates
+## 🚀 Inicio Rápido
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+### Prerrequisitos
+- PHP >= 8.1 con extensiones `intl`, `mbstring`, `mysqli`, `curl`, `json` habilitadas.
+- MySQL / MariaDB (o Laragon).
+- Composer 2.x
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+### Instalación
 
-## Setup
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/gruizmetasolutions-cpu/warhorse-backend.git
+cd warhorse-backend
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+# 2. Instalar dependencias con Composer
+composer install
 
-## Important Change with index.php
+# 3. Configurar entorno
+cp .env.example .env
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+# 4. Crear la Base de Datos en MySQL
+# mysql -u root -e "CREATE DATABASE IF NOT EXISTS warhorse_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+# 5. Iniciar el servidor local de CodeIgniter
+php spark serve
+```
 
-**Please** read the user guide for a better explanation of how CI4 works!
+El servidor estará escuchando en `http://localhost:8080`.
 
-## Repository Management
+## 📡 Endpoints de la API
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+### 1. Registrar Cotización / Contacto
+- **Método**: `POST`
+- **Ruta**: `/api/contact`
+- **Headers**: `Content-Type: application/json`
+- **Body**:
+```json
+{
+  "name": "Juan Pérez",
+  "email": "juan@empresa.com",
+  "service": "ftl",
+  "message": "Requiero cotización FTL de Cd. Juárez a El Paso para 3 cargas semanales."
+}
+```
+- **Respuesta de Éxito (200 OK)**:
+```json
+{
+  "status": "success",
+  "message": "Contact request received and routed to specialized department.",
+  "department": "Quotes@WarhorseBrokerage.com"
+}
+```
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+## 📂 Estructura del Proyecto
 
-## Server Requirements
+```text
+backend/
+├── app/
+│   ├── Config/
+│   │   ├── Database.php        # Configuración de base de datos
+│   │   └── Routes.php          # Definición de rutas API (/api/contact)
+│   ├── Controllers/
+│   │   ├── BaseController.php
+│   │   └── ContactController.php # Controlador de enrutamiento inteligente
+│   ├── Models/
+│   └── Views/
+├── public/
+│   └── index.php               # Punto de entrada HTTP
+├── writable/                   # Archivos temporales, logs y cache (Ignorados por git)
+├── .env.example                # Plantilla sanitizada de entorno
+├── composer.json
+└── spark                       # CLI de CodeIgniter 4
+```
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+## 🔒 Seguridad y Buenas Prácticas
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+- Ninguna contraseña de base de datos real ni secreto de producción se encuentra en el repositorio.
+- Las variables reales deben configurarse de forma local mediante el archivo `.env` (el cual está protegido en `.gitignore`).
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+---
 
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+© 2026 **Warhorse Logistics Group**. Todos los derechos reservados.
